@@ -14,6 +14,12 @@ using std::cout;
 using std::endl;
 using std::cin;
 
+void menu(){
+    cout << "//////////////////////////////////////////\n"; 
+    cout << "// KnightNC's Super Cool BP Randomizer! //\n";
+    cout << "///////////// (version 1.0) //////////////\n";
+    cout << "//////////////////////////////////////////\n\n"; 
+}
 // Select a random wave number for each of the six bosses in the game.
 // Return a dictionary where:
 // key == wave Number
@@ -37,25 +43,25 @@ std::map<int, std::string> selectBosses(std::vector<std::string> bossList){
 
 void readEnemies(std::vector<std::string>& enemyList){
     std::ifstream inFile;
-    int ok = 0;
+    bool ok = false;
     char choice;
     do{
         cout << "Include colored enemies? y or n" << endl;    
         cin >> choice;
         switch(choice){
             case 'y': case 'Y':
-                inFile.open("Enemy_List_Colored.txt");
-                ok = 1;
+                inFile.open("input/Enemy_List_Colored.txt");
+                ok = true;
                 break;
             case 'n': case 'N':
-                inFile.open("Enemy_List_No_Colored.txt");
-                ok = 1;
+                inFile.open("input/Enemy_List_No_Colored.txt");
+                ok = true;
                 break;
             default:
                 cout << "Include colored enemies? y or n" << endl;
                 break;
-        };
-    }while(ok == 0);
+        }
+    }while(ok == false);
     
     while(!inFile.eof())
     {
@@ -68,7 +74,7 @@ void readEnemies(std::vector<std::string>& enemyList){
 
 void readBosses(std::vector<std::string>& bossList){
     std::ifstream inFile;
-    inFile.open("Boss_List.txt");
+    inFile.open("input/Boss_List.txt");
     
     while(!inFile.eof())
     {
