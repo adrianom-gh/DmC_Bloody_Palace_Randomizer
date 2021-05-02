@@ -29,7 +29,7 @@ std::map<int, std::string> selectBosses(std::vector<std::string> bossList){
         int key = waveNumList[rand() % waveNumList.size()];
         remove(waveNumList.begin(), waveNumList.end() - 1, key);
         bossDictionary[key] = bossList[i];
-        cout << "Key: " << key << '\n' << "Value: " << bossList[i] << endl;
+        //cout << "Key: " << key << '\n' << "Value: " << bossList[i] << endl;
         
     }
     return bossDictionary;
@@ -37,7 +37,25 @@ std::map<int, std::string> selectBosses(std::vector<std::string> bossList){
 
 void readEnemies(std::vector<std::string>& enemyList){
     std::ifstream inFile;
-    inFile.open("Enemy_List.txt");
+    int ok = 0;
+    char choice;
+    do{
+        cout << "Include colored enemies? y or n" << endl;    
+        cin >> choice;
+        switch(choice){
+            case 'y': case 'Y':
+                inFile.open("Enemy_List_Colored.txt");
+                ok = 1;
+                break;
+            case 'n': case 'N':
+                inFile.open("Enemy_List_No_Colored.txt");
+                ok = 1;
+                break;
+            default:
+                cout << "Include colored enemies? y or n" << endl;
+                break;
+        };
+    }while(ok == 0);
     
     while(!inFile.eof())
     {
@@ -151,7 +169,7 @@ void userParameters(std::vector<std::string>& enemyList, std::map<int, std::stri
         enemyMap[name] = false;
     }
 
-    cout << "Max number of enemies: " << endl;
+    cout << "Max number of enemies per wave? " << endl;
     cin >> maxEnemies;
 
    
