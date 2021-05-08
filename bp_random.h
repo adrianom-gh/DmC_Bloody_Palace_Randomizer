@@ -228,7 +228,7 @@ void writeWavesToFile(std::vector<std::string>& waveList){
 void menu(std::vector<std::string>& enemyList, std::vector<std::string>& bossList, std::vector<std::string>& waveList){
     cout << "//////////////////////////////////////////\n"; 
     cout << "// KnightNC's Super Cool BP Randomizer! //\n";
-    cout << "///////////// (version 1.12) /////////////\n";
+    cout << "///////////// (version 1.13) /////////////\n";
     cout << "//////////////////////////////////////////\n\n"; 
 
     readEnemies(enemyList);
