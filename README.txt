@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////
 // KnightNC's Super Cool Bloody Palace Randomizer //
-//                 version 1.12                   //
+//                 version 1.13                   //
 ////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////
@@ -36,6 +36,8 @@ I added this change because I found that BP randomized can be brutal. Adding ext
 experience more enjoyable. 
 
 Changes made:
+1.13
+- fixed a bug where Baby Rages did not spawn when colored enemies are disabled.
 1.12
 - added a file in \resources that gives Dante more health per enemy kill (health given to Dante may change in future updates)
 1.11
