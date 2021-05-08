@@ -14,17 +14,11 @@ using std::cout;
 using std::endl;
 using std::cin;
 
-void menu(){
-    cout << "//////////////////////////////////////////\n"; 
-    cout << "// KnightNC's Super Cool BP Randomizer! //\n";
-    cout << "///////////// (version 1.0) //////////////\n";
-    cout << "//////////////////////////////////////////\n\n"; 
-}
 // Select a random wave number for each of the six bosses in the game.
 // Return a dictionary where:
 // key == wave Number
 // value == boss name
-std::map<int, std::string> selectBosses(std::vector<std::string> bossList){
+std::map<int, std::string> selectBosses(std::vector<std::string>& bossList){
     std::vector<int> waveNumList;
     std::map<int, std::string> bossDictionary;
     for(int i = 2; i < 101; ++i){
@@ -33,8 +27,13 @@ std::map<int, std::string> selectBosses(std::vector<std::string> bossList){
     srand(time(NULL));
     for(int i = 0; i < 5; ++i){
         int key = waveNumList[rand() % waveNumList.size()];
-        remove(waveNumList.begin(), waveNumList.end() - 1, key);
-        bossDictionary[key] = bossList[i];
+        //remove(waveNumList.begin(), waveNumList.end() - 1, key);
+        while(!bossDictionary[key].empty() || key == 15 || key == 35 || key == 55 || key == 75 || key == 95){
+            key = waveNumList[rand() % waveNumList.size()];
+        }
+        if(bossDictionary[key].empty()){
+            bossDictionary[key] = bossList[i];
+        }
         //cout << "Key: " << key << '\n' << "Value: " << bossList[i] << endl;
         
     }
@@ -68,6 +67,7 @@ void readEnemies(std::vector<std::string>& enemyList){
         std::string enemyName;
         inFile >> enemyName;
         enemyList.push_back(enemyName);
+        cout << enemyName << endl;
     }
     inFile.close();
 }
@@ -88,9 +88,9 @@ void readBosses(std::vector<std::string>& bossList){
 std::string setEnemyWave(int i, std::vector<std::string>& enemyList, std::map<std::string, bool> enemyMap, std::vector<std::string> selectedEnemyList){
     int numEnemyTypes = (rand() % 3) + 1;
     int index = 0;
-        
+    cout << enemyList.size() << endl;
     while(index != (numEnemyTypes)){
-        int randomNum = rand() % (enemyList.size() - 1);
+        int randomNum = rand() % enemyList.size();
         std::string enemy = enemyList[randomNum];
         if(enemyMap[enemy] == false){
             selectedEnemyList.push_back(enemy);
@@ -163,7 +163,7 @@ std::string setBossWave(int i, std::map<int, std::string>& bossDictionary){
 
 void userParameters(std::vector<std::string>& enemyList, std::map<int, std::string>& bossDictionary, std::vector<std::string>& waveList)
 {
-    int maxEnemies;
+    //int maxEnemies;
     
     std::vector<std::string> selectedEnemyList;
 
@@ -175,8 +175,8 @@ void userParameters(std::vector<std::string>& enemyList, std::map<int, std::stri
         enemyMap[name] = false;
     }
 
-    cout << "Max number of enemies per wave? " << endl;
-    cin >> maxEnemies;
+    //cout << "Max number of enemies per wave? " << endl;
+    //cin >> maxEnemies;
 
    
     // Use numEnemyTypes as an iterator to grab items in enemyList. If there is a duplicate enemy
@@ -224,5 +224,18 @@ void writeWavesToFile(std::vector<std::string>& waveList){
     outFile << ("CompleteFinal_RankSSS=52028800\n" "CompleteFinal_RankSS=42021000\n" "CompleteFinal_RankS=30014400\n" "CompleteFinal_RankA=20009000\n" "CompleteFinal_RankB=12003600\n" "CompleteFinal_RankC=4501080\n" "CompleteFinal_RankD=1600240");
     outFile.close();  
 }
-        
+
+void menu(std::vector<std::string>& enemyList, std::vector<std::string>& bossList, std::vector<std::string>& waveList){
+    cout << "//////////////////////////////////////////\n"; 
+    cout << "// KnightNC's Super Cool BP Randomizer! //\n";
+    cout << "///////////// (version 1.12) /////////////\n";
+    cout << "//////////////////////////////////////////\n\n"; 
+
+    readEnemies(enemyList);
+    readBosses(bossList);
+    std::map<int, std::string> bossDictionary = selectBosses(bossList);
+    userParameters(enemyList, bossDictionary, waveList);
+    writeWavesToFile(waveList);
+}
+
 #endif
