@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////
 // KnightNC's Super Cool Bloody Palace Randomizer //
-//                 version 1.13                   //
+//                 version 1.14                   //
 ////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////
@@ -8,7 +8,7 @@
 ////////////////////////////////////////////////////
 
 1. Run "randomizer.exe"
-2. A command prompt (black window) will appear asking you for some user inputs (colored enemies, max enemies per wave).
+2. A command prompt (black window) will appear asking you for some user inputs (colored enemies, max enemies per wave, etc.).
 3. Answer the questions!
 4. Command prompt will disappear and generate a DevilGame.ini file inside of the folder with "randomizer.exe"
 5. Copy the generated "DevilGame.ini" into steamapps\common\DmC Devil May Cry\DevilGame\Published\Content\DLCBloodyPalace
@@ -34,6 +34,12 @@ this if you want. The file is in \resources\disable_timer\disable_timer_and_give
 
 I added this change because I found that BP randomized can be brutal. Adding extra health per kill should make the 
 experience more enjoyable. 
+
+////////////////////////////////////////////////////
+// Damage colored enemies: //
+////////////////////////////////////////////////////
+I added SamD's mod that allows users to attack colored enemies with any weapon. You can find this in the 
+\resources folder.
 
 Changes made:
 1.13

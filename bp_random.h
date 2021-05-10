@@ -14,33 +14,8 @@ using std::cout;
 using std::endl;
 using std::cin;
 
-// Select a random wave number for each of the six bosses in the game.
-// Return a dictionary where:
-// key == wave Number
-// value == boss name
-std::map<int, std::string> selectBosses(std::vector<std::string>& bossList){
-    std::vector<int> waveNumList;
-    std::map<int, std::string> bossDictionary;
-    for(int i = 2; i < 101; ++i){
-        waveNumList.push_back(i);
-    }
-    srand(time(NULL));
-    for(int i = 0; i < 5; ++i){
-        int key = waveNumList[rand() % waveNumList.size()];
-        //remove(waveNumList.begin(), waveNumList.end() - 1, key);
-        while(!bossDictionary[key].empty() || key == 15 || key == 35 || key == 55 || key == 75 || key == 95){
-            key = waveNumList[rand() % waveNumList.size()];
-        }
-        if(bossDictionary[key].empty()){
-            bossDictionary[key] = bossList[i];
-        }
-        //cout << "Key: " << key << '\n' << "Value: " << bossList[i] << endl;
-        
-    }
-    return bossDictionary;
-}
-
-void readEnemies(std::vector<std::string>& enemyList){
+std::vector<std::string> readEnemies(){
+    std::vector<std::string> enemyList;
     std::ifstream inFile;
     bool ok = false;
     char choice;
@@ -67,12 +42,14 @@ void readEnemies(std::vector<std::string>& enemyList){
         std::string enemyName;
         inFile >> enemyName;
         enemyList.push_back(enemyName);
-        cout << enemyName << endl;
     }
     inFile.close();
+    return enemyList;
 }
 
-void readBosses(std::vector<std::string>& bossList){
+
+std::vector<std::string> readBosses(){
+    std::vector<std::string> bossList;
     std::ifstream inFile;
     inFile.open("input/Boss_List.txt");
     
@@ -83,12 +60,39 @@ void readBosses(std::vector<std::string>& bossList){
         bossList.push_back(bossName);
     }
     inFile.close();
+    return bossList;
 }
 
-std::string setEnemyWave(int i, std::vector<std::string>& enemyList, std::map<std::string, bool> enemyMap, std::vector<std::string> selectedEnemyList){
+// Select a random wave number for each of the six bosses in the game.
+// Return a dictionary where:
+// key == wave Number
+// value == boss name
+std::map<int, std::string> filterBossList(int numWaves, std::vector<std::string>& bossList){
+    std::vector<int> waveNumList;
+    std::map<int, std::string> bossDictionary;
+    for(int i = 2; i < numWaves; ++i){
+        waveNumList.push_back(i);
+    }
+    srand(time(NULL));
+    for(int i = 0; i < 5; ++i){
+        int key = waveNumList[rand() % waveNumList.size()];
+        //remove(waveNumList.begin(), waveNumList.end() - 1, key);
+        while(!bossDictionary[key].empty() || key == 15 || key == 35 || key == 55 || key == 75 || key == 95){
+            key = waveNumList[rand() % waveNumList.size()];
+        }
+        if(bossDictionary[key].empty()){
+            bossDictionary[key] = bossList[i];
+        }
+        //cout << "Key: " << key << '\n' << "Value: " << bossList[i] << endl;
+        
+    }
+    return bossDictionary;
+}
+
+std::string setEnemyWave(int i, bool hardEnemyLimit, std::vector<std::string>& enemyList, std::map<std::string, bool> enemyMap, std::vector<std::string> selectedEnemyList){
     int numEnemyTypes = (rand() % 3) + 1;
     int index = 0;
-    cout << enemyList.size() << endl;
+    //cout << enemyList.size() << endl;
     while(index != (numEnemyTypes)){
         int randomNum = rand() % enemyList.size();
         std::string enemy = enemyList[randomNum];
@@ -108,15 +112,29 @@ std::string setEnemyWave(int i, std::vector<std::string>& enemyList, std::map<st
     std::string wave = "+m_WaveData=(WaveNum=" + waveNum + ", Enemies=(";
     std::string completeEnemyString;
 
-    int firstEnemySize = (rand() % 5) + 1;
-    std::string firstEnemySizeStr = std::to_string(firstEnemySize);
+    int firstEnemySize, secondEnemySize, thirdEnemySize, fourthEnemySize;
 
     if(numEnemyTypes == 1){
+        int firstEnemySize = (rand() % 5) + 1;
+        std::string firstEnemySizeStr = std::to_string(firstEnemySize);
         std::string enemy1 = "(EnemyName=" + selectedEnemyList[0] + ", Num=" + firstEnemySizeStr + ")))"; 
-           completeEnemyString = wave + enemy1;
+        completeEnemyString = wave + enemy1;
     }
     else if(numEnemyTypes == 2){
-        int secondEnemySize = (rand() % 5) + 1;
+        if(hardEnemyLimit == true && selectedEnemyList[0] == "DreamRunner" || selectedEnemyList[0] == "BuzzsawTank" || selectedEnemyList[0] == "Summoner" || selectedEnemyList[0] == "TankDrone"){
+           firstEnemySize = 2; 
+        }
+        else{
+           firstEnemySize = (rand() % 5) + 1; 
+        }
+        if(hardEnemyLimit == true && selectedEnemyList[1] == "DreamRunner" || selectedEnemyList[1] == "BuzzsawTank" || selectedEnemyList[1] == "Summoner" || selectedEnemyList[1] == "TankDrone"){
+           secondEnemySize = 2; 
+        }
+        else{
+           secondEnemySize = (rand() % 5) + 1; 
+        }
+
+        std::string firstEnemySizeStr = std::to_string(firstEnemySize);
         std::string secondEnemySizeStr = std::to_string(secondEnemySize);
 
         std::string enemy1 = "(EnemyName=" + selectedEnemyList[0] + ", Num=" + firstEnemySizeStr + ")";
@@ -124,10 +142,27 @@ std::string setEnemyWave(int i, std::vector<std::string>& enemyList, std::map<st
         completeEnemyString = wave + enemy1 + enemy2;
     }
     else if(numEnemyTypes == 3){
-        int secondEnemySize = (rand() % 5) + 1;
-        std::string secondEnemySizeStr = std::to_string(secondEnemySize);
+        if(hardEnemyLimit == true && selectedEnemyList[0] == "DreamRunner" || selectedEnemyList[0] == "BuzzsawTank" || selectedEnemyList[0] == "Summoner" || selectedEnemyList[0] == "TankDrone"){
+           firstEnemySize = 2; 
+        }
+        else{
+           firstEnemySize = (rand() % 5) + 1; 
+        }
+        if(hardEnemyLimit == true && selectedEnemyList[1] == "DreamRunner" || selectedEnemyList[1] == "BuzzsawTank" || selectedEnemyList[1] == "Summoner" || selectedEnemyList[1] == "TankDrone"){
+           secondEnemySize = 2; 
+        }
+        else{
+           secondEnemySize = (rand() % 5) + 1; 
+        }
+        if(hardEnemyLimit == true && selectedEnemyList[2] == "DreamRunner" || selectedEnemyList[2] == "BuzzsawTank" || selectedEnemyList[2] == "Summoner" || selectedEnemyList[2] == "TankDrone"){
+           thirdEnemySize = 2; 
+        }
+        else{
+           thirdEnemySize = (rand() % 5) + 1; 
+        }
 
-        int thirdEnemySize = (rand() % 5) + 1;
+        std::string firstEnemySizeStr = std::to_string(firstEnemySize);
+        std::string secondEnemySizeStr = std::to_string(secondEnemySize);
         std::string thirdEnemySizeStr = std::to_string(thirdEnemySize);
 
         std::string enemy1 = "(EnemyName=" + selectedEnemyList[0] + ", Num=" + firstEnemySizeStr + ")";
@@ -136,13 +171,34 @@ std::string setEnemyWave(int i, std::vector<std::string>& enemyList, std::map<st
         completeEnemyString = wave + enemy1 + enemy2 + enemy3;
     }
     else if(numEnemyTypes == 4){
-        int secondEnemySize = (rand() % 5) + 1;
+        if(hardEnemyLimit == true && selectedEnemyList[0] == "DreamRunner" || selectedEnemyList[0] == "BuzzsawTank" || selectedEnemyList[0] == "Summoner" || selectedEnemyList[0] == "TankDrone"){
+           firstEnemySize = 2; 
+        }
+        else{
+           firstEnemySize = (rand() % 5) + 1; 
+        }
+        if(hardEnemyLimit == true && selectedEnemyList[1] == "DreamRunner" || selectedEnemyList[1] == "BuzzsawTank" || selectedEnemyList[1] == "Summoner" || selectedEnemyList[1] == "TankDrone"){
+           secondEnemySize = 2; 
+        }
+        else{
+           secondEnemySize = (rand() % 5) + 1; 
+        }
+        if(hardEnemyLimit == true && selectedEnemyList[2] == "DreamRunner" || selectedEnemyList[2] == "BuzzsawTank" || selectedEnemyList[2] == "Summoner" || selectedEnemyList[2] == "TankDrone"){
+           thirdEnemySize = 2; 
+        }
+        else{
+           thirdEnemySize = (rand() % 5) + 1; 
+        }
+        if(hardEnemyLimit == true && selectedEnemyList[3] == "DreamRunner" || selectedEnemyList[3] == "BuzzsawTank" || selectedEnemyList[3] == "Summoner" || selectedEnemyList[3] == "TankDrone"){
+           fourthEnemySize = 2; 
+        }
+        else{
+           fourthEnemySize = (rand() % 5) + 1; 
+        }
+
+        std::string firstEnemySizeStr = std::to_string(firstEnemySize);
         std::string secondEnemySizeStr = std::to_string(secondEnemySize);
-
-        int thirdEnemySize = (rand() % 5) + 1;
         std::string thirdEnemySizeStr = std::to_string(thirdEnemySize);
-
-        int fourthEnemySize = (rand() % 5) + 1;
         std::string fourthEnemySizeStr = std::to_string(fourthEnemySize);
 
         std::string enemy1 = "(EnemyName=" + selectedEnemyList[0] + ", Num=" + firstEnemySizeStr + ")";
@@ -161,10 +217,9 @@ std::string setBossWave(int i, std::map<int, std::string>& bossDictionary){
     return completeBossString;
 }
 
-void userParameters(std::vector<std::string>& enemyList, std::map<int, std::string>& bossDictionary, std::vector<std::string>& waveList)
-{
-    //int maxEnemies;
-    
+std::vector<std::string> createWaveList(int numWaves, bool hardEnemyLimit, std::vector<std::string>& enemyList, std::map<int, std::string>& bossDictionary)
+{  
+    std::vector<std::string> waveList;
     std::vector<std::string> selectedEnemyList;
 
     // A dictionary that contains the key (the enemy name) and the value (a boolean).
@@ -175,34 +230,29 @@ void userParameters(std::vector<std::string>& enemyList, std::map<int, std::stri
         enemyMap[name] = false;
     }
 
-    //cout << "Max number of enemies per wave? " << endl;
-    //cin >> maxEnemies;
-
-   
     // Use numEnemyTypes as an iterator to grab items in enemyList. If there is a duplicate enemy
     // in selectedEnemyList, use a dictionary to check this
     
     srand(time(NULL));
     std::string completeEnemyString;
-    for(int i = 1; i < 101; ++i){
-        if(!bossDictionary[i].empty()){
-           completeEnemyString = setBossWave(i, bossDictionary);
+    for(int i = 1; i < numWaves; ++i){
+       if(!bossDictionary[i].empty()){
+            completeEnemyString = setBossWave(i, bossDictionary);
         }
-        else{
-            completeEnemyString = setEnemyWave(i, enemyList, enemyMap, selectedEnemyList);
+       else{
+            completeEnemyString = setEnemyWave(i, hardEnemyLimit, enemyList, enemyMap, selectedEnemyList);
         }
-        
         waveList.push_back(completeEnemyString);
         selectedEnemyList.clear();
     }
-    std::string vergilBossString = "+m_WaveData=(WaveNum=101, Enemies=((EnemyName=Vergil, Num=1)))";
+    std::string vergilBossString = "+m_WaveData=(WaveNum=" + std::to_string(numWaves) + ", Enemies=((EnemyName=Vergil, Num=1)))";
     waveList.push_back(vergilBossString);
+    return waveList;
 }
 
-void writeWavesToFile(std::vector<std::string>& waveList){
+void createDevilGame(std::vector<std::string>& waveList){
     std::ofstream outFile;
     outFile.open("DevilGame.ini");
-    
     outFile << "[NTEngine.NTDownloadableContentManager]\n";
     outFile << "+DLCManifests=(DLCID=\"BloodyPalace\",bChangesMainMenu=true,bToggledByUser=false)\n\n\n";
     outFile << "[NTGameFramework.NTPlayerStart]\n";
@@ -225,17 +275,49 @@ void writeWavesToFile(std::vector<std::string>& waveList){
     outFile.close();  
 }
 
-void menu(std::vector<std::string>& enemyList, std::vector<std::string>& bossList, std::vector<std::string>& waveList){
+
+void menu(){
     cout << "//////////////////////////////////////////\n"; 
     cout << "// KnightNC's Super Cool BP Randomizer! //\n";
-    cout << "///////////// (version 1.13) /////////////\n";
+    cout << "///////////// (version 1.14) /////////////\n";
     cout << "//////////////////////////////////////////\n\n"; 
 
-    readEnemies(enemyList);
-    readBosses(bossList);
-    std::map<int, std::string> bossDictionary = selectBosses(bossList);
-    userParameters(enemyList, bossDictionary, waveList);
-    writeWavesToFile(waveList);
+    int maxWaves;
+    cout << "Max number of waves: " << endl;
+    cin >> maxWaves;
+    while(!(cin >> maxWaves)){
+        cout << "Max number of waves: " << endl;
+        cin.clear();
+        cin.ignore(123, '\n');
+    }
+
+    char choice;
+    bool endSwitch = false;
+    bool hardEnemyLimit;
+    cout << "Set hard limit on DreamRunners, Tyrants, Witches, and Butchers? y or n" << endl;
+    do{
+        cin >> choice;
+        switch(choice){
+            case 'y': case 'Y':
+                hardEnemyLimit = true;
+                endSwitch = true;
+                break;
+            case 'n': case 'N':
+                endSwitch = true;
+                hardEnemyLimit = false;
+                break;
+            default:
+                cout << "Set hard limit on DreamRunners, Tyrants, Witches, and Butchers? y or n" << endl;
+                break;
+        }
+    }while(endSwitch == false);
+
+    std::vector<std::string> enemyList = readEnemies();
+    std::vector<std::string> bossList = readBosses();
+    std::map<int, std::string> bossDictionary = filterBossList(maxWaves, bossList);
+    std::vector<std::string> waveList = createWaveList(maxWaves, hardEnemyLimit, enemyList, bossDictionary);
+    createDevilGame(waveList);
+
 }
 
 #endif
