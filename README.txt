@@ -42,6 +42,12 @@ I added SamD's mod that allows users to attack colored enemies with any weapon. 
 \resources folder.
 
 Changes made:
+1.14
+- added an option to set the number of waves
+- added an option to set a hard limit on DreamRunners, Tyrants, Butchers, and Witches. This hard limit is 2,
+  unless there is only one enemy type in a stage. If there is only one enemy type in a stage, this limit can range
+  from any number between 1 and 5.
+- added SamD's colored enemy fix
 1.13
 - fixed a bug where Baby Rages did not spawn when colored enemies are disabled.
 1.12
