@@ -15,7 +15,12 @@
 6. Done! Have fun!
 
 Keep in mind that this mod is in its early stages and more features/bug fixes will be added in the future.
-If you need to restore the BP waves to normal, use the backup found in the \resources\backups folder supplied.
+
+////////////////////////////////////////////////////
+// Backups //
+////////////////////////////////////////////////////
+If you need to restore BP to its original settings, I provided backups for all files. You can find them in the 
+\resources folder.
 
 ////////////////////////////////////////////////////
 // To disable the timer: //
