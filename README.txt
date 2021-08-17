@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////
 // KnightNC's Super Cool Bloody Palace Randomizer //
-//                 version 1.14                   //
+//                 version 1.15                  //
 ////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////
@@ -15,12 +15,7 @@
 6. Done! Have fun!
 
 Keep in mind that this mod is in its early stages and more features/bug fixes will be added in the future.
-
-////////////////////////////////////////////////////
-// Backups //
-////////////////////////////////////////////////////
-If you need to restore BP to its original settings, I provided backups for all files. You can find them in the 
-\resources folder.
+If you need to restore the BP waves to normal, use the backup found in the \resources\backups folder supplied.
 
 ////////////////////////////////////////////////////
 // To disable the timer: //
@@ -47,6 +42,8 @@ I added SamD's mod that allows users to attack colored enemies with any weapon. 
 \resources folder.
 
 Changes made:
+1.15
+- added an option to disable bosses
 1.14
 - added an option to set the number of waves
 - added an option to set a hard limit on DreamRunners, Tyrants, Butchers, and Witches. This hard limit is 2,

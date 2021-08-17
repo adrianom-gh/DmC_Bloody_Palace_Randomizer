@@ -250,6 +250,34 @@ std::vector<std::string> createWaveList(int numWaves, bool hardEnemyLimit, std::
     return waveList;
 }
 
+std::vector<std::string> createWaveListNoBosses(int numWaves, bool hardEnemyLimit, std::vector<std::string>& enemyList)
+{  
+    std::vector<std::string> waveList;
+    std::vector<std::string> selectedEnemyList;
+
+    // A dictionary that contains the key (the enemy name) and the value (a boolean).
+    // These will all be set to false for now. Used to check for duplicates.
+    std::map<std::string, bool> enemyMap;
+
+    for(auto& name: enemyList){
+        enemyMap[name] = false;
+    }
+
+    // Use numEnemyTypes as an iterator to grab items in enemyList. If there is a duplicate enemy
+    // in selectedEnemyList, use a dictionary to check this
+    
+    srand(time(NULL));
+    std::string completeEnemyString;
+    for(int i = 1; i < numWaves + 1; ++i){
+       completeEnemyString = setEnemyWave(i, hardEnemyLimit, enemyList, enemyMap, selectedEnemyList);
+       waveList.push_back(completeEnemyString);
+       selectedEnemyList.clear();
+    }
+    //std::string vergilBossString = "+m_WaveData=(WaveNum=" + std::to_string(numWaves) + ", Enemies=((EnemyName=Vergil, Num=1)))";
+    //waveList.push_back(vergilBossString);
+    return waveList;
+}
+
 void createDevilGame(std::vector<std::string>& waveList){
     std::ofstream outFile;
     outFile.open("DevilGame.ini");
@@ -279,17 +307,12 @@ void createDevilGame(std::vector<std::string>& waveList){
 void menu(){
     cout << "//////////////////////////////////////////\n"; 
     cout << "// KnightNC's Super Cool BP Randomizer! //\n";
-    cout << "///////////// (version 1.14) /////////////\n";
+    cout << "///////////// (version 1.15) /////////////\n";
     cout << "//////////////////////////////////////////\n\n"; 
 
     int maxWaves;
     cout << "Max number of waves: " << endl;
     cin >> maxWaves;
-    while(!(cin >> maxWaves)){
-        cout << "Max number of waves: " << endl;
-        cin.clear();
-        cin.ignore(123, '\n');
-    }
 
     char choice;
     bool endSwitch = false;
@@ -311,12 +334,47 @@ void menu(){
                 break;
         }
     }while(endSwitch == false);
+  
+    // Create another switch that asks if the user wants to include/exclude bosses
+    endSwitch = false;
 
-    std::vector<std::string> enemyList = readEnemies();
-    std::vector<std::string> bossList = readBosses();
-    std::map<int, std::string> bossDictionary = filterBossList(maxWaves, bossList);
-    std::vector<std::string> waveList = createWaveList(maxWaves, hardEnemyLimit, enemyList, bossDictionary);
-    createDevilGame(waveList);
+    // Flush cin buffer from choice
+    //std::cin.ignore(INT_MAX);
+
+    cout << "Include or remove bosses in your run? Type '1' or '2'. \n";
+    cout << "1: Include bosses \n2: Remove bosses \n";
+    int choice2;
+    do{
+        cin >> choice2;
+        switch(choice2){
+            case 2:
+               {
+                  std::vector<std::string> enemyList = readEnemies();
+                  std::vector<std::string> waveList = createWaveListNoBosses(maxWaves, hardEnemyLimit, enemyList);
+                  createDevilGame(waveList);
+                  endSwitch = true;
+                  break;
+               }
+            case 1:
+               {
+                  std::vector<std::string> enemyList = readEnemies();
+                  std::vector<std::string> bossList = readBosses();
+                  std::map<int, std::string> bossDictionary = filterBossList(maxWaves, bossList);
+                  std::vector<std::string> waveList = createWaveList(maxWaves, hardEnemyLimit, enemyList, bossDictionary);
+                  createDevilGame(waveList);
+                  endSwitch = true;
+                  break;
+               }
+            default:
+               cout << "Include or exclude bosses in your run? 1 to include, 2 to exclude. \n";
+               break;
+        }
+    }while(endSwitch == false);
+    //std::vector<std::string> enemyList = readEnemies();
+    //std::vector<std::string> bossList = readBosses();
+    //std::map<int, std::string> bossDictionary = filterBossList(maxWaves, bossList);
+    //std::vector<std::string> waveList = createWaveList(maxWaves, hardEnemyLimit, enemyList, bossDictionary);
+    //createDevilGame(waveList);
 
 }
 
